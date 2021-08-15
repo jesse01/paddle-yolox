@@ -1,0 +1,13 @@
+# TODO: Update with exact module version
+paddlepaddle-gpu
+numpy
+opencv_python
+loguru
+scikit-image
+tqdm
+pillow
+thop
+ninja
+tabulate
+tensorboard
+
