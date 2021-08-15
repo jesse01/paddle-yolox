@@ -4,6 +4,7 @@
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import paddle
+import paddle.distributed as dist
 import argparse
 import random
 from loguru import logger
@@ -127,7 +128,10 @@ def main(exp, args, num_gpu):
 
     evaluator = exp.get_evaluator(args.batch_size, is_distributed, args.test)
 
-    if rank >= 0:
+    if is_distributed:
+        dist.init_parallel_env()
+        model = paddle.DataParallel(model)
+    elif rank >= 0:
         paddle.set_device("GPU:" + str(rank))
     model.eval()
 

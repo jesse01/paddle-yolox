@@ -6,11 +6,10 @@ import datetime
 import os
 import time
 from loguru import logger
-import apex
 import paddle
+import paddle.distributed as dist
 from apex import amp
 from visualdl import LogWriter
-import paddle.distributed as dist
 
 from yolox.data import DataPrefetcher
 from yolox.utils import (
@@ -127,11 +126,13 @@ class Trainer:
         logger.info("exp value:\n{}".format(self.exp))
 
         # model related init
-        paddle.set_device("GPU:" + str(self.local_rank))
         model = self.exp.get_model()
         if self.is_distributed:
             dist.init_parallel_env()
             model = paddle.DataParallel(model)
+        elif self.local_rank >=0:
+            paddle.set_device("GPU:" + str(self.local_rank))
+
         # logger.info(
         #     "Model Summary: {}".format(get_model_info(model, self.exp.test_size))
         # )
